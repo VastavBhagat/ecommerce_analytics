@@ -24,7 +24,7 @@ jobs:
       - name: Install dbt
         run: pip install dbt-snowflake
 
-      - name: Create profiles.yml
+      - name: ecommerce_analytics
         run: |
           mkdir -p ~/.dbt
           cat > ~/.dbt/profiles.yml << EOF
