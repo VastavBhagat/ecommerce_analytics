@@ -27,10 +27,11 @@ select
     o.lifetime_value,
     o.days_since_last_order,
     case
-        when o.days_since_last_order > 180 then 'churned'
-        when o.days_since_last_order > 90  then 'at risk'
-        when o.total_orders > 3            then 'loyal'
+        when o.customer_id is null             then 'never_ordered'
+        when o.days_since_last_order > 180     then 'churned'
+        when o.days_since_last_order > 90      then 'at risk'
+        when o.total_orders > 3                then 'loyal'
         else 'active'
-    end                           as customer_segment
+    end                                        as customer_segment
 from customers c
 left join orders o using (customer_id)

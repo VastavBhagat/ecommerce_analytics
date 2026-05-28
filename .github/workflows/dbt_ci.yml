@@ -38,7 +38,6 @@ jobs:
           echo "      warehouse: ECOMMERCE_WH" >> ~/.dbt/profiles.yml
           echo "      schema: STAGING" >> ~/.dbt/profiles.yml
           echo "      threads: 4" >> ~/.dbt/profiles.yml
-          cat ~/.dbt/profiles.yml
 
       - name: dbt debug
         run: dbt debug

@@ -15,9 +15,9 @@ cleaned as (
             order_purchase_timestamp,
             order_delivered_customer)              as delivery_days,
         case
+            when order_delivered_customer is null  then null
             when order_delivered_customer::date
-                 <= order_estimated_delivery::date
-            then true
+                 <= order_estimated_delivery::date then true
             else false
         end                                        as delivered_on_time
     from source
