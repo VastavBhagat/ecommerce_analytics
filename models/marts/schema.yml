@@ -1,0 +1,48 @@
+version: 2
+
+models:
+  - name: fact_orders
+    description: "One row per order with revenue metrics"
+    columns:
+      - name: order_id
+        description: "Unique order identifier"
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_id
+      - name: revenue
+        data_tests:
+          - not_null
+      - name: order_status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['delivered','shipped','canceled','unavailable',
+                         'invoiced','processing','created','approved']
+
+  - name: dim_customers
+    description: "One row per unique customer with segmentation"
+    columns:
+      - name: customer_id
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_segment
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['active','loyal','at risk','churned']
+
+  - name: dim_products
+    description: "One row per product with sales metrics"
+    columns:
+      - name: product_id
+        data_tests:
+          - unique
+          - not_null
