@@ -1,0 +1,56 @@
+name: dbt CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    paths:
+      - 'ecommerce_analytics/**'
+
+jobs:
+  dbt-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dbt
+        run: pip install dbt-snowflake
+
+      - name: Create profiles.yml
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml << EOF
+          ecommerce_analytics:
+            target: dev
+            outputs:
+              dev:
+                type: snowflake
+                account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+                user: ${{ secrets.SNOWFLAKE_USER }}
+                password: ${{ secrets.SNOWFLAKE_PASSWORD }}
+                role: ACCOUNTADMIN
+                database: ANALYTICS_DB
+                warehouse: ECOMMERCE_WH
+                schema: STAGING
+                threads: 4
+          EOF
+
+      - name: dbt debug
+        working-directory: ecommerce_analytics
+        run: dbt debug
+
+      - name: dbt run
+        working-directory: ecommerce_analytics
+        run: dbt run
+
+      - name: dbt test
+        working-directory: ecommerce_analytics
+        run: dbt test
